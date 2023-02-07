@@ -1,32 +1,28 @@
 import { useState } from 'react';
 import css from './ContactForm.module.css'
 
-export function Form ({ onData }) {
-  const [name, setName] = useState('');
-  const [number, setNumber] = useState('');
+export function Form({ onData }) {
+  
+const initialState = {
+  name: '',
+  number: '',
+};
 
-  const handleChange = event => {
-    const { name, value } = event.currentTarget;
+  const [state, setState] = useState({ ...initialState });
+  const {name,number} = state;
 
-    switch (name) {
-      case 'name':
-        setName(value);
-        break;
-
-      case 'number':
-        setNumber(value);
-        break;
-
-      default:
-        return;
-    }
+  const handleChange = ({target}) => {
+    const { name, value } = target;
+    setState(prevState => ({
+      ...prevState,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = event => {
     event.preventDefault();
-    onData(name, number);
-    setName('');
-    setNumber('');
+    onData({ ...state });
+    setState({ ...initialState });
   };
 
   return (
@@ -53,11 +49,11 @@ export function Form ({ onData }) {
           value={number}
           pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
           title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-          required          
+          required
           onChange={handleChange}
         />
       </label>
-      <button className={css.button} type="submit">
+      <button className={css.button} type="submit" disabled={!name || !number}>
         Add contact
       </button>
     </form>
